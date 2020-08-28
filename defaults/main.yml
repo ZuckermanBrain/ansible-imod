@@ -1,2 +1,9 @@
 ---
 # defaults file for app-imod
+imod_installer_url: "https://bio3d.colorado.edu/ftp/latestIMOD/RHEL7-64_CUDA8.0/imod_4.10.46_RHEL7-64_CUDA8.0.sh"
+imod_install_dir: /opt/imod
+imod_module: True
+imod_module_dir : /opt/lmod/modulefiles/Linux
+imod_java_dir: /etc/alternatives/jre
+imod_calib_dir: /usr/local/ImodCalib
+sbgrid_installed: True

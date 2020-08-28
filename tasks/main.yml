@@ -1,2 +1,60 @@
 ---
 # tasks file for app-imod
+- name: Check if the IMOD installer is already downloaded
+  stat:
+    path: "/tmp/{{ imod_installer_url | basename }}"
+  register: imod_installer_check
+
+- name: Check if IMOD is already installed
+  stat:
+    path: "{{ imod_install_dir }}/IMOD/bin/imod"
+  register: imod_installation_check
+
+- name: Download the IMOD installer
+  become: true
+  get_url:
+    url: "{{ imod_installer_url }}"
+    dest: "/tmp/{{ imod_installer_url | basename }}"
+    mode: '0770'
+  when: not imod_installer_check.stat.exists and not imod_installation_check.stat.exists
+
+- name: Ensure that install directory exists
+  file:
+    path: "{{ imod_install_dir }}"
+    state: directory
+  when: not imod_installation_check.stat.exists
+
+- name: Install IMOD
+  command: |
+      /tmp/{{ imod_installer_url | basename }} \
+        -yes \
+        -dir {{ imod_install_dir }} \
+        {% if imod_module %}-skip{% endif %}
+  when: not imod_installation_check.stat.exists
+
+- name: Remove IMOD installer.
+  file:
+    path: "/tmp/{{ imod_installer_url | basename }}"
+    state: absent
+  when: not imod_installation_check.stat.exists
+
+- name: Ensure that module directory exists
+  file:
+    path: "{{ imod_module_dir }}"
+    state: directory
+  when: imod_module and imod_module_dir is defined
+
+- name: Replace IMOD-linux.sh and IMOD-linux.csh
+  copy:
+    src: "{{ item }}"
+    dest: "{{ imod_install_dir }}/IMOD/{{ item }}"
+  loop:
+    - IMOD-linux.sh
+    - IMOD-linux.csh
+  when: imod_module and imod_module_dir is defined
+
+- name: Add in IMOD module
+  template:
+    src: imod.lua.j2
+    dest: "{{ imod_module_dir }}/imod.lua"
+  when: imod_module and imod_module_dir is defined

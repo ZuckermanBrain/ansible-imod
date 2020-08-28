@@ -1,0 +1,29 @@
+local help_message = [[
+IMOD
+
+This module loads IMOD
+]]
+
+help(help_message,"\n")
+
+whatis("Name: IMOD ")
+whatis("URL: https://bio3d.colorado.edu/imod/")
+
+{% if sbgrid_installed %}
+unload ("sbgrid", "biogrids")
+{% endif %}
+
+setenv("IMOD_DIR","{{ imod_install_dir }}/IMOD")
+setenv("IMOD_JAVADIR","{{ imod_java_dir }}")
+setenv("IMOD_PLUGIN_DIR","{{ imod_install_dir }}/IMOD/lib/imodplug")
+setenv("IMOD_CALIB_DIR","{{ imod_calib_dir }}")
+setenv("FOR_DISABLE_STACK_TRACE","1")
+setenv("IMOD_QTLIBDIR","{{ imod_install_dir }}/IMOD/qtlib")
+prepend_path("PATH","{{ imod_install_dir }}/IMOD/bin")
+prepend_path("LD_LIBRARY_PATH","{{ imod_install_dir }}/IMOD/lib")
+prepend_path("MANPATH","{{ imod_install_dir }}/IMOD/man")
+if (myShellType() == "csh") then
+  execute {cmd="source {{ imod_install_dir }}/IMOD/IMOD-linux.csh", modeA={"load"}}
+elseif (myShellType() == "sh") then
+  execute {cmd="source {{ imod_install_dir }}/IMOD/IMOD-linux.sh", modeA={"load"}}
+end
