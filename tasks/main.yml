@@ -24,10 +24,11 @@
     state: directory
   when: not imod_installation_check.stat.exists
 
-- name: Ensure that calibration directory exists
+- name: Ensure that calibration directory exists and is world-readable
   file:
     path: "{{ imod_calib_dir }}"
     state: directory
+    mode: '1777'
 
 - name: Install IMOD
   command: |
