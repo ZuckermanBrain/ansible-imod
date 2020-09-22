@@ -29,6 +29,8 @@
     path: "{{ imod_calib_dir }}"
     state: directory
     mode: '1777'
+    owner: root
+    group: root
 
 - name: Install IMOD
   command: |
